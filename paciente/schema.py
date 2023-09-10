@@ -1,67 +1,51 @@
 import graphene
 from graphene_django import DjangoObjectType
 from .models import Paciente
+from .commonMutationsArguments import CommonMutationsArguments
+from django_filters import FilterSet, OrderingFilter, CharFilter
+from graphene_django.filter import DjangoFilterConnectionField
+from django.db.models import Q
+from .utils import convert_graphqlid_to_int
+
+class PacienteFilter(FilterSet):
+    search = CharFilter(method='searching')
+    class Meta:
+        model = Paciente
+        fields = {
+            'nombre': ('contains','startswith'),
+            'nombre_madre': ('contains','startswith',),
+            'apellidos': ('contains','startswith',),
+        }
+    order_by = OrderingFilter(
+        fields=(
+        ('created_at', 'created_at'),
+        ),
+        field_labels={
+        'created_at': 'created_at',
+        }
+    )
+    def searching(self, queryset, name, value):
+        return queryset.filter(Q(nombre__icontains=value) | Q(nombre_madre__icontains=value) | Q(apellidos__icontains=value))
 
 class PacienteType(DjangoObjectType):
     class Meta:
         model = Paciente
+        interfaces = (graphene.relay.Node,)
+        
+class PacienteConnections(graphene.relay.Connection):
+    class Meta:
+        node = PacienteType
         
 class Query(graphene.ObjectType):
-    pacientes = graphene.List(PacienteType)
+    pacientes = DjangoFilterConnectionField(PacienteType, filterset_class = PacienteFilter)
     paciente = graphene.Field(PacienteType, id = graphene.ID())
     
     def resolve_pacientes(self, info, **kwargs):
         return Paciente.objects.all()
     
     def resolve_paciente(self, info, id):
-        return Paciente.objects.get(id = id)
-
-class CommonMutationsArguments:
-    nombre = graphene.String(required=False)
-    apellidos = graphene.String(required=False)
-    nombre_madre = graphene.String()
-    carnet_identidad_madre = graphene.String(required=False)
-    direccion = graphene.String()
-    telefono = graphene.String(required=False)
-    municipio = graphene.String(required=False)
-    provincia = graphene.String(required=False)
-    diagnostico_ingreso = graphene.String()
-    atresia_esofagica = graphene.Boolean(required=False)
-    defectos_pared = graphene.Boolean(required=False)
-    atresia_estemos_intestinales = graphene.Boolean(required=False)
-    defectos_diafragmaticos = graphene.Boolean(required=False)
-    otros = graphene.Boolean(required=False)
-    resultado_alta = graphene.String()
-    embarazada_de_riesgo = graphene.Boolean(required=False)
-    comprobacion_consejo_genetico = graphene.Boolean(required=False)
-    captacion_precoz = graphene.Boolean(required=False)
-    num_controles_embarazo = graphene.Int(required=False)
-    diagnostico_prenatal = graphene.Boolean(required=False)
-    hoja_contrarreferencia =graphene.Boolean(required=False)
-    prog_acciones = graphene.Boolean(required=False)
-    cronograma_seguimiento = graphene.Boolean(required=False)
-    info_maternidad = graphene.Boolean(required=False)
-    coordinacion_equipos_ginecologia = graphene.Boolean()
-    criterio_cirujano = graphene.Boolean(required=False)
-    neonatologo_salon_parto = graphene.Boolean(required=False)
-    actuacion_segun_afeccion = graphene.Boolean(required=False)
-    ginecologo_asignado = graphene.Boolean(required=False)
-    coordinacion_traslado_provincial = graphene.Boolean(required=False)
-    coincidencia_diagnostica = graphene.Boolean(required=False)
-    coordinacion_trasado_cerecine = graphene.Boolean(required=False)
-    justificacion_traslado = graphene.Boolean(required=False)
-    evaluacion_traslado = graphene.String(required=False)
-    deficiencias_traslado = graphene.String(required=False)
-    interconsulta_cirujano = graphene.Boolean(required=False)
-    interconsulta_medica = graphene.Boolean(required=False)
-    estudios_intervencion_quirurgica = graphene.Boolean(required=False)
-    documentos_contrarreferencia = graphene.String(required=False)
-    prog_acciones_caso_individual = graphene.Boolean(required=False)
-    cronograma_atencion = graphene.Boolean(required=False)
-    confirmacion_segunda_opinion = graphene.Boolean(required=False)
-    integracion_equipo_quirurgico = graphene.Boolean(required=False)
-    equipo_anestesico_asignado = graphene.Boolean(required=False)
-    clasificacion = graphene.String(required=False)   
+        num_id = convert_graphqlid_to_int(id)
+        return Paciente.objects.get(id = num_id)
   
 class CreatePacienteMutation(graphene.Mutation):
     class Arguments(CommonMutationsArguments):
@@ -125,7 +109,8 @@ class DeletePacienteMutation(graphene.Mutation):
     message = graphene.String()    
     
     def mutate(self, info, id):
-        note = Paciente.objects.get(id = id)
+        num_id = convert_graphqlid_to_int(id)
+        note = Paciente.objects.get(id = num_id)
         note.delete()      
         return DeletePacienteMutation(message = "Paciente borrado exitosamente")
 
