@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4m7razg0v(jhq49@g8$#7vu&0-117eyeh+@ou8env5o)=0qal0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['neonatobackend.pythonanywhere.com']
 
 
 # Application definition
