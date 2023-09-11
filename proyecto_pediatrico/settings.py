@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'paciente',
     
     #third party apps
-    'rest_framework',
     "corsheaders",
     'graphene_django',
 ]
