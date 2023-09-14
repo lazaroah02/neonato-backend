@@ -94,7 +94,7 @@ class CreatePacienteMutation(graphene.Mutation):
             confir_segunda_opinion = kwargs.get("confir_segunda_opinion", "EMPTY"),
             verificar_equipo_quirurgico = kwargs.get("verificar_equipo_quirurgico", "EMPTY"),
             verificar_equipo_anestesico = kwargs.get("verificar_equipo_anestesico", "EMPTY"),
-            clasificacion = kwargs.get("clasificacion", "")
+            clasificacion = kwargs.get("clasificacion", "EMPTY")
         )
         paciente.save()
         return CreatePacienteMutation(paciente = paciente)
