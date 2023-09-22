@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     
     #local apps
     'paciente',
+    'authentication',
+    'users',
     
     #third party apps
     "corsheaders",
@@ -148,6 +150,8 @@ GRAPHENE = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+AUTH_USER_MODEL = 'authentication.CustomUser'
+
 AUTHENTICATION_BACKENDS = [
     "graphql_auth.backends.GraphQLAuthBackend",
     'django.contrib.auth.backends.ModelBackend',
@@ -155,7 +159,7 @@ AUTHENTICATION_BACKENDS = [
 
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": False,
-     "JWT_EXPIRATION_DELTA": timedelta(days=5),
+    "JWT_EXPIRATION_DELTA": timedelta(days=5),
     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
     
     "JWT_ALLOW_ANY_CLASSES":[
