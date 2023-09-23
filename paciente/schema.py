@@ -8,6 +8,7 @@ from django.db.models import Q
 from django_graphene_permissions import permissions_checker
 from utils.custom_permissions import IsStaff, CustomIsAuthenticated
 from utils.convert_graphql_id_to_int import convert_graphql_id_to_int
+from utils.make_evaluations import make_evaluations
 
 class PacienteFilter(FilterSet):
     search = CharFilter(method='searching')
@@ -101,7 +102,7 @@ class CreatePacienteMutation(graphene.Mutation):
             verificar_equipo_anestesico = kwargs.get("verificar_equipo_anestesico", ""),
             clasificacion = kwargs.get("clasificacion", "")
         )
-        paciente.save()
+        make_evaluations(paciente)
         return CreatePacienteMutation(paciente = paciente)
             
 class DeletePacienteMutation(graphene.Mutation):
@@ -166,7 +167,7 @@ class UpdatePacienteMutation(graphene.Mutation):
         paciente.verificar_equipo_anestesico = kwargs.get("verificar_equipo_anestesico", paciente.verificar_equipo_anestesico)
         paciente.clasificacion = kwargs.get("clasificacion", paciente.clasificacion)
         paciente.fecha = kwargs.get("fecha", paciente.fecha)
-        paciente.save()   
+        make_evaluations(paciente)   
         return UpdatePacienteMutation(paciente = paciente)    
         
 class Mutation(graphene.ObjectType):
