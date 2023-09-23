@@ -157,6 +157,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+GRAPHQL_AUTH = {
+    'LOGIN_ALLOWED_FIELDS': ['email', 'username'],
+}
+
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": False,
     "JWT_EXPIRATION_DELTA": timedelta(days=5),
@@ -168,4 +172,3 @@ GRAPHQL_JWT = {
         "graphql_auth.mutations.ObtainJSONWebToken",
     ],
 }
-

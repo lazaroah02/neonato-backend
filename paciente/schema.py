@@ -1,11 +1,13 @@
 import graphene
 from graphene_django import DjangoObjectType
 from .models import Paciente
-from .commonMutationsArguments import CommonMutationsArguments
+from .common_mutations_arguments import CommonMutationsArguments
 from django_filters import FilterSet, OrderingFilter, CharFilter
 from graphene_django.filter import DjangoFilterConnectionField
 from django.db.models import Q
-from .utils import convert_graphqlid_to_int
+from django_graphene_permissions import permissions_checker
+from utils.custom_permissions import IsStaff, CustomIsAuthenticated
+from utils.convert_graphql_id_to_int import convert_graphql_id_to_int
 
 class PacienteFilter(FilterSet):
     search = CharFilter(method='searching')
@@ -40,18 +42,21 @@ class Query(graphene.ObjectType):
     pacientes = DjangoFilterConnectionField(PacienteType, filterset_class = PacienteFilter)
     paciente = graphene.Field(PacienteType, id = graphene.ID())
     
+    @permissions_checker([CustomIsAuthenticated])
     def resolve_pacientes(self, info, **kwargs):
         return Paciente.objects.all()
     
+    @permissions_checker([CustomIsAuthenticated])
     def resolve_paciente(self, info, id):
-        num_id = convert_graphqlid_to_int(id)
+        num_id = convert_graphql_id_to_int(id)
         return Paciente.objects.get(id = num_id)
   
 class CreatePacienteMutation(graphene.Mutation):
     class Arguments(CommonMutationsArguments):
         pass
     paciente = graphene.Field(PacienteType)    
-      
+    
+    @permissions_checker([CustomIsAuthenticated, IsStaff])  
     def mutate(self, info, fecha, nombre_de_la_madre, direccion, municipio, provincia, diagnostico_egreso, alta, **kwargs):
         paciente = Paciente(
             fecha = fecha,
@@ -104,8 +109,9 @@ class DeletePacienteMutation(graphene.Mutation):
         id = graphene.ID(required=True)
     message = graphene.String()    
     
+    @permissions_checker([CustomIsAuthenticated, IsStaff]) 
     def mutate(self, info, id):
-        num_id = convert_graphqlid_to_int(id)
+        num_id = convert_graphql_id_to_int(id)
         note = Paciente.objects.get(id = num_id)
         note.delete()      
         return DeletePacienteMutation(message = "Paciente borrado exitosamente")
@@ -115,8 +121,9 @@ class UpdatePacienteMutation(graphene.Mutation):
         id = graphene.ID(required=True)
     paciente = graphene.Field(PacienteType)    
     
+    @permissions_checker([CustomIsAuthenticated, IsStaff]) 
     def mutate(self, info, id, **kwargs):
-        num_id = convert_graphqlid_to_int(id)
+        num_id = convert_graphql_id_to_int(id)
         paciente = Paciente.objects.get(id = num_id)
         paciente.nombre = kwargs.get("nombre", paciente.nombre)
         paciente.apellidos = kwargs.get("apellidos", paciente.apellidos)
@@ -158,6 +165,7 @@ class UpdatePacienteMutation(graphene.Mutation):
         paciente.verificar_equipo_quirurgico = kwargs.get("verificar_equipo_quirurgico", paciente.verificar_equipo_quirurgico)
         paciente.verificar_equipo_anestesico = kwargs.get("verificar_equipo_anestesico", paciente.verificar_equipo_anestesico)
         paciente.clasificacion = kwargs.get("clasificacion", paciente.clasificacion)
+        paciente.fecha = kwargs.get("fecha", paciente.fecha)
         paciente.save()   
         return UpdatePacienteMutation(paciente = paciente)    
         

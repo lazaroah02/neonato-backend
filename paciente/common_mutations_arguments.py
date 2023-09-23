@@ -43,4 +43,4 @@ class CommonMutationsArguments:
     verificar_equipo_quirurgico =EnumSiNo(required=False)
     verificar_equipo_anestesico = EnumSiNo(required=False)
     clasificacion = EnumClasificacion(required=False) 
-    fecha = graphene.Date(required=True)
+    fecha = graphene.Date(required=False)

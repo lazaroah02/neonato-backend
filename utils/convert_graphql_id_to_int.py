@@ -1,7 +1,7 @@
 import base64
-from .exceptions import InvalidIdException
+from utils.exceptions import InvalidIdException
 
-def convert_graphqlid_to_int(id):
+def convert_graphql_id_to_int(id):
     try:
         byte_id = bytes(id, "UTF-8")
         decoded_id = base64.b64decode(byte_id)

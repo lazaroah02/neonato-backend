@@ -54,7 +54,7 @@ class Paciente(models.Model):
     verificar_equipo_anestesico = models.CharField(max_length = 5, default ="", blank=True)  
     #Centro provincial de Genetica Holguin
     clasificacion = models.CharField(max_length = 5, default="", blank = True)
-    fecha = models.DateTimeField(default=datetime.datetime.now())
+    fecha = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now_add = True)
     
     def __str__(self):
