@@ -17,7 +17,9 @@ class PacienteFilter(FilterSet):
         fields = {
             'nombre': ('contains','startswith'),
             'nombre_de_la_madre': ('contains','startswith',),
-            'apellidos': ('contains','startswith',),
+            'municipio': ('contains','startswith',),
+            'provincia': ('contains','startswith',),
+            'diagnostico_egreso': ('contains','startswith',),
         }
     order_by = OrderingFilter(
         fields=(
@@ -28,7 +30,7 @@ class PacienteFilter(FilterSet):
         }
     )
     def searching(self, queryset, name, value):
-        return queryset.filter(Q(nombre__icontains=value) | Q(nombre_de_la_madre__icontains=value) | Q(apellidos__icontains=value))
+        return queryset.filter(Q(nombre__icontains=value) | Q(nombre_de_la_madre__icontains=value))
 
 class PacienteType(DjangoObjectType):
     class Meta:
@@ -135,6 +137,7 @@ class UpdatePacienteMutation(graphene.Mutation):
         paciente.municipio = kwargs.get("municipio", paciente.municipio)
         paciente.provincia = kwargs.get("provincia", paciente.provincia)
         paciente.diagnostico_ingreso = kwargs.get("diagnostico_ingreso", paciente.diagnostico_ingreso)
+        paciente.diagnostico_egreso = kwargs.get("diagnostico_egreso", paciente.diagnostico_egreso)
         paciente.alta = kwargs.get("alta", paciente.alta)
         paciente.riesgo = kwargs.get("riesgo", paciente.riesgo)
         paciente.genetico = kwargs.get("genetico", paciente.genetico)
