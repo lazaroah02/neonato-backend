@@ -24,17 +24,17 @@ class Query(graphene.ObjectType):
             "pacientes_defectos_diafragmaticos": 0,
             "pacientes_otros": 0
         }
-        
+
         for paciente in pacientes:
-            if paciente.diagnostico_egreso.strip() == diagnosticos_egreso["1"].strip():
+            if diagnosticos_egreso["1"].strip() in paciente.diagnostico_egreso.strip() :
                 diagnostico_egreso_results["pacientes_atresia_esofagica"] += 1
-            if paciente.diagnostico_egreso.strip() == diagnosticos_egreso["2"].strip():
+            if diagnosticos_egreso["2"].strip() in paciente.diagnostico_egreso.strip():
                 diagnostico_egreso_results["pacientes_defectos_pared"] += 1
-            if paciente.diagnostico_egreso.strip() == diagnosticos_egreso["3"].strip():
+            if diagnosticos_egreso["3"].strip() in paciente.diagnostico_egreso.strip():
                 diagnostico_egreso_results["pacientes_atresias_y_estenosis_intestinales"] += 1
-            if paciente.diagnostico_egreso.strip() == diagnosticos_egreso["4"].strip():
+            if diagnosticos_egreso["4"].strip() in paciente.diagnostico_egreso.strip():
                 diagnostico_egreso_results["pacientes_defectos_diafragmaticos"] += 1
-            if paciente.diagnostico_egreso.strip() == diagnosticos_egreso["5"].strip():
+            if diagnosticos_egreso["5"].strip() in paciente.diagnostico_egreso.strip():
                 diagnostico_egreso_results["pacientes_otros"] += 1
                 
         return diagnostico_egreso_results
