@@ -12,6 +12,7 @@ from utils.make_evaluations import make_evaluations
 
 class PacienteFilter(FilterSet):
     search = CharFilter(method='searching')
+    filter_by_resultado_alta = CharFilter(method='filtering_by_resultado_alta')
     class Meta:
         model = Paciente
         fields = {
@@ -31,6 +32,9 @@ class PacienteFilter(FilterSet):
     )
     def searching(self, queryset, name, value):
         return queryset.filter(Q(nombre__icontains=value) | Q(nombre_de_la_madre__icontains=value))
+    
+    def filtering_by_resultado_alta(self, queryset, name, value):
+        return queryset.filter(alta = value)
 
 class PacienteType(DjangoObjectType):
     class Meta:
@@ -59,7 +63,7 @@ class CreatePacienteMutation(graphene.Mutation):
         pass
     paciente = graphene.Field(PacienteType)    
     
-    @permissions_checker([CustomIsAuthenticated, IsStaff])  
+    @permissions_checker([CustomIsAuthenticated])  
     def mutate(self, info, fecha, nombre_de_la_madre, direccion, municipio, provincia, diagnostico_egreso, alta, **kwargs):
         paciente = Paciente(
             fecha = fecha,
@@ -112,7 +116,7 @@ class DeletePacienteMutation(graphene.Mutation):
         id = graphene.ID(required=True)
     message = graphene.String()    
     
-    @permissions_checker([CustomIsAuthenticated, IsStaff]) 
+    @permissions_checker([CustomIsAuthenticated]) 
     def mutate(self, info, id):
         num_id = convert_graphql_id_to_int(id)
         note = Paciente.objects.get(id = num_id)
@@ -124,7 +128,7 @@ class UpdatePacienteMutation(graphene.Mutation):
         id = graphene.ID(required=True)
     paciente = graphene.Field(PacienteType)    
     
-    @permissions_checker([CustomIsAuthenticated, IsStaff]) 
+    @permissions_checker([CustomIsAuthenticated]) 
     def mutate(self, info, id, **kwargs):
         num_id = convert_graphql_id_to_int(id)
         paciente = Paciente.objects.get(id = num_id)

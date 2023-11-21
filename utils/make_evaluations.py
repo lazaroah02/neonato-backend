@@ -1,5 +1,6 @@
 from utils import evaluations_paciente_care
 def make_evaluations(instance):
+    '''Evaluates each one of the attencions to the pacient'''
     instance.evaluacion_atencion_primaria = evaluations_paciente_care.evaluacion_atencion_primaria(instance)   
     instance.evaluacion_regreso_neonato_operado = evaluations_paciente_care.evaluacion_regreso_neonato_operado(instance)   
     instance.evaluacion_hogar_materno = evaluations_paciente_care.evaluacion_hogar_materno(instance)   
