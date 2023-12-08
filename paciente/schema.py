@@ -76,6 +76,7 @@ class CreatePacienteMutation(graphene.Mutation):
             nombre = kwargs.get("nombre", ""),
             apellidos = kwargs.get("apellidos", ""),
             carnet_identidad_madre = kwargs.get("carnet_identidad_madre", ""),
+            diagnostico_ingreso = kwargs.get("diagnostico_ingreso", ""),
             telefono = kwargs.get("telefono", ""),
             riesgo = kwargs.get("riesgo", ""),
             genetico = kwargs.get("genetico", ""),
